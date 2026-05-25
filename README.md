@@ -92,3 +92,5 @@ A comprehensive 3–5 minute demonstration video covers:
 2. **Local Duel (Human vs. Human):** Highlighting pawn jump actions, diagonal overrides, wall snaps, and path block preventions.
 3. **AI Showdowns (Human vs. AI):** Demonstrating moves against Easy, Medium, and our optimized Hard AI (Minimax + Alpha-Beta).
 
+*Demo Video URL: [https://drive.google.com/drive/folders/1Fy59SXhcroYjA0YGgumGvsL-NfBGQ2j2?usp=sharing]*
+*(Please see the Project Report for the complete PDF writeup)*
