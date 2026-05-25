@@ -99,17 +99,27 @@ class QuoridorUI {
         });
 
         // Difficulty selector
-        document.querySelectorAll('[data-diff]').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                this.sound.playClick();
-                document.querySelectorAll('[data-diff]').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                this.aiDifficulty = btn.getAttribute('data-diff');
-                this.game.logs.push(`Difficulty changed to ${this.aiDifficulty.toUpperCase()}`);
-                this.syncUI();
-            });
-        });
-
+      
+document.querySelectorAll('[data-diff]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        this.sound.playClick();
+        document.querySelectorAll('[data-diff]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        this.aiDifficulty = btn.getAttribute('data-diff');
+        
+        // Reset the game data structures and reposition players to their bases
+        this.game.reset();
+        this.selectedPawn = false;
+        this.hoveredWall = null;
+        this.isAiThinking = false;
+        this.particles = [];
+        
+        // Push clear difficulty update log to feed and refresh screen
+        this.game.logs.push(`Difficulty changed to ${this.aiDifficulty.toUpperCase()}. Board reset!`);
+        this.syncUI();
+       
+    });
+});
         // Control Buttons
         document.getElementById('btn-reset').addEventListener('click', () => {
             this.sound.playClick();
