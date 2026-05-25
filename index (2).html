@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quoridor Game AI Project</title>
+    <!-- Google Fonts for Orbitron (futuristic accents) and Rajdhani / Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="glass-bg"></div>
+    <div class="glow-orb orb-1"></div>
+    <div class="glow-orb orb-2"></div>
+
+    <header class="main-header">
+        <div class="header-logo">
+            <h1 class="logo-text">QUORIDOR</h1>
+            <span class="logo-sub">CYBERSTRATEGY</span>
+        </div>
+        <div class="header-controls">
+            <button id="mute-button" class="icon-btn" title="Mute/Unmute Audio">🔊</button>
+            <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="0.3" title="Adjust Sound Volume">
+        </div>
+    </header>
+
+    <main class="game-container">
+        
+        <!-- Left Column: Settings and Rules -->
+        <section class="left-sidebar glass-panel">
+            <div class="panel-section">
+                <h2 class="section-title">GAME MODE</h2>
+                <div class="btn-group">
+                    <button class="menu-btn active" data-mode="human_vs_ai">🤖 VS COMPUTER</button>
+                    <button class="menu-btn" data-mode="human_vs_human">👥 LOCAL DUEL</button>
+                </div>
+            </div>
+
+            <div id="ai-settings-panel" class="panel-section">
+                <h2 class="section-title">AI LEVEL</h2>
+                <div class="btn-group-diff">
+                    <button class="diff-btn" data-diff="easy">EASY</button>
+                    <button class="diff-btn" data-diff="medium">MEDIUM</button>
+                    <button class="diff-btn active" data-diff="hard">HARD</button>
+                </div>
+            </div>
+
+            <div class="panel-section">
+                <h2 class="section-title">CONTROLS</h2>
+                <div class="control-actions">
+                    <button id="btn-reset" class="control-btn action-danger">🔄 RESTART</button>
+                    <button id="btn-undo" class="control-btn" disabled>↩️ UNDO</button>
+                    <button id="btn-redo" class="control-btn" disabled>↪️ REDO</button>
+                    <button id="btn-save" class="control-btn">💾 SAVE STATE</button>
+                    <button id="btn-load" class="control-btn">📂 LOAD STATE</button>
+                </div>
+            </div>
+
+            <div class="panel-section stats-panel">
+                <h2 class="section-title">STATISTICS</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-label">MATCHES</span>
+                        <span id="stat-total-games" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">P1 WINS</span>
+                        <span id="stat-human-wins" class="stat-value text-cyan">0</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-label">P2 WINS</span>
+                        <span id="stat-ai-wins" class="stat-value text-pink">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-section guide-panel">
+                <h2 class="section-title">HOW TO PLAY</h2>
+                <ul class="rules-list">
+                    <li>🎯 <strong>Goal:</strong> Reach the opposite baseline first.</li>
+                    <li>🚶 <strong>Move:</strong> Click your pawn. Highlights show legal orthogonal moves.</li>
+                    <li>🧱 <strong>Walls:</strong> Hover cursor between squares to place a wall.</li>
+                    <li>🔄 <strong>Rotate:</strong> <strong>Spacebar</strong> or <strong>Right-Click</strong> to rotate wall direction.</li>
+                    <li>🚫 <strong>Rule:</strong> You cannot block players completely (must have 1 path).</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Center: Interactive Game Board -->
+        <section class="board-area">
+            <div class="board-wrapper glass-panel">
+                <div class="game-status-banner">
+                    <h2 id="current-turn" class="turn-text">Player 1's Turn</h2>
+                </div>
+                <div class="canvas-container">
+                    <canvas id="game-canvas"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Right Column: Player Cards and Game Logs -->
+        <section class="right-sidebar glass-panel">
+            <div class="player-card card-p1">
+                <div class="card-glow-bar bg-cyan"></div>
+                <div class="player-info">
+                    <span class="player-title">PLAYER 1</span>
+                    <span class="player-side">BOTTOM BASELINE</span>
+                </div>
+                <div class="wall-counter">
+                    <span class="wall-text">WALLS</span>
+                    <span id="p1-walls" class="wall-number text-cyan">10</span>
+                </div>
+            </div>
+
+            <div class="player-card card-p2">
+                <div class="card-glow-bar bg-pink"></div>
+                <div class="player-info">
+                    <span class="player-title">PLAYER 2</span>
+                    <span class="player-side">TOP BASELINE</span>
+                </div>
+                <div class="wall-counter">
+                    <span class="wall-text">WALLS</span>
+                    <span id="p2-walls" class="wall-number text-pink">10</span>
+                </div>
+            </div>
+
+            <div class="panel-section logs-panel">
+                <h2 class="section-title">LOGS & ALERTS</h2>
+                <div id="log-feed" class="log-feed">
+                    <div class="log-item log-sys">Game ready. Select difficulty to play!</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal Winner Popup Dialog -->
+    <div id="winner-modal" class="modal-overlay hidden">
+        <div class="modal-content glass-panel">
+            <div class="modal-glow-border"></div>
+            <span class="modal-trophy">🏆</span>
+            <h2 class="modal-title">VICTORY CHRONICLE</h2>
+            <p id="winner-message" class="modal-msg">Congratulations! Player 1 reached the baseline.</p>
+            <button id="btn-modal-close" class="modal-btn">ACKNOWLEDGE</button>
+        </div>
+    </div>
+
+    <!-- Scripts bootstrap -->
+    <script src="js/sound.js"></script>
+    <script src="js/game.js"></script>
+    <script src="js/ai.js"></script>
+    <script src="js/ui.js"></script>
+    <script>
+        // Init engines
+        window.addEventListener('DOMContentLoaded', () => {
+            const game = new QuoridorGame();
+            const ai = new QuoridorAI(game);
+            const ui = new QuoridorUI(game, ai, soundSynth);
+        });
+    </script>
+</body>
+</html>
